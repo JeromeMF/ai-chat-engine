@@ -13,7 +13,7 @@ import { resolve } from 'node:path';
    used to get from chat.js it gets from dist/ai-chat.js.
 
    Neither carries CSS in the script. Both emit one chat.css beside it,
-   because half of a page like the board is markup written in strings and can
+   because half of a plain-script page is markup written in strings and can
    only reach styles that are in the cascade. */
 export default defineConfig(({ mode }) => {
   const bundle = mode === 'bundle';

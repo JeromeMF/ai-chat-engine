@@ -17,22 +17,22 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 window.__payloads = [];
 window.__answers = [];
 window.__forgot = [];
-window.__chats = { k1: [{ id: 's-old', title: 'An earlier chat', updated: new Date().toISOString(), cwd: '/Users/x/Code', mode: 'ask' }] };
+window.__chats = { k1: [{ id: 's-old', title: 'An earlier chat', updated: new Date().toISOString(), cwd: '/home/x/projects', mode: 'ask' }] };
 
 const asst = (content, id = 'm1') => ({ type: 'assistant', message: { id, content } });
 function script(payload) {
   const p = payload.prompt;
-  const lines = [{ type: 'board_start', cwd: '/Users/x/Code', home: '/Users/x/Code' }, { type: 'system', subtype: 'init', session_id: 's-new' }];
+  const lines = [{ type: 'board_start', cwd: '/home/x/projects', home: '/home/x/projects' }, { type: 'system', subtype: 'init', session_id: 's-new' }];
   if (/permission/.test(p)) lines.push({ type: 'board_permission', requestId: 'r1', toolName: 'Bash', title: 'Run rm -rf build?', description: 'Claude wants to clean the build folder', canAlwaysAllow: true }, { wait: 500 });
   if (/slow/.test(p)) lines.push({ wait: 3000 });
-  lines.push(asst([{ type: 'thinking' }, { type: 'tool_use', name: 'Read', input: { file_path: '/Users/x/Code/notes.md' } }]));
+  lines.push(asst([{ type: 'thinking' }, { type: 'tool_use', name: 'Read', input: { file_path: '/home/x/projects/notes.md' } }]));
   lines.push(asst([{ type: 'tool_use', name: 'Grep', input: { pattern: 'deadline' } }], 'm2'));
   lines.push(asst([{ type: 'text', text: 'Here is **the answer** with `code`.\n\n- one\n- two' }], 'm3'));
   lines.push({ type: 'result', result: 'Here is **the answer** with `code`.\n\n- one\n- two', session_id: 's-new', total_cost_usd: 0.004, duration_ms: 1500 });
   return lines;
 }
 window.makeTransport = () => ({
-  status: async () => ({ available: true, home: '/Users/x/Code', work: true }),
+  status: async () => ({ available: true, home: '/home/x/projects', work: true }),
   sessions: async () => ({ chats: window.__chats }),
   transcript: async () => ({ turns: [{ ask: 'earlier question', reply: 'an **old** answer', tools: [{ name: 'Read', input: { file_path: '/a/b.md' } }] }] }),
   async *run(payload, signal) {

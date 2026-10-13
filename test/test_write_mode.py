@@ -36,11 +36,11 @@ ok("with no write_allows, writing is held to the cwd",
 
 held = Engine(tmp, os.path.join(tmp, "c.json"), os.path.join(tmp, "s.json"),
               write_denies=["**/data/*/todo.md"],
-              write_allows=["/home/me/Code/to-dos/data/work/projects"])
+              write_allows=["/home/me/app/data/work/projects"])
 allowed, denied = rules(held)
 ok("with write_allows, writing is held to those folders instead",
-   allowed == ["Edit(//home/me/Code/to-dos/data/work/projects/**)",
-               "Write(//home/me/Code/to-dos/data/work/projects/**)"])
+   allowed == ["Edit(//home/me/app/data/work/projects/**)",
+               "Write(//home/me/app/data/work/projects/**)"])
 ok("the cwd itself is no longer allowed", not any("//home/me/Code/**" in a for a in allowed))
 ok("write_denies still apply", "Edit(**/data/*/todo.md)" in denied and "Write(**/data/*/todo.md)" in denied)
 

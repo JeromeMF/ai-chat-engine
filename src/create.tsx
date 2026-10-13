@@ -4,8 +4,8 @@ import { ChatController } from './controller';
 import { ChatWindow } from './ChatWindow';
 import type { ChatOptions } from './types';
 
-/* The imperative way in, for a page that is not a React app: the board's
-   plain scripts, or a card's window in a canvas that creates one per card.
+/* The imperative way in, for a page that is not a React app: plain
+   scripts, or a card's window in a canvas that creates one per card.
 
      const chat = create({ endpoints: {...} });   // once
      chat.loadStatus();                           // once, on load

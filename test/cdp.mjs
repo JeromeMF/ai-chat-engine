@@ -1,5 +1,5 @@
 // A tiny Chrome DevTools driver for the tests: launches headless Chrome on a URL and exposes
-// evaluate, until, click, drag, type, key and shot. No dependency, the same approach the board's own tests use.
+// evaluate, until, click, drag, type, key and shot. No dependency, the same approach a host's own tests can use.
 import { spawn } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 export async function launch(url, { port = 9555, size = '1400,900', profile = '/tmp/cdp-profile-' + port } = {}) {
