@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""A second app on top of ai_chat, unrelated to to-dos on purpose.
+"""A second app on top of ai_chat, unrelated to the first host on purpose.
 
 Proof that the module is actually reusable rather than merely factored out:
 no task board, no drawer, no `chat:` tag on a markdown line — just a handful
 of notes, each able to carry its own Claude chat thread, in an app that has
-never heard of to-dos. It even uses a different guard header name
+never heard of it. It even uses a different guard header name
 (`X-Notes-Demo` instead of `X-Board`) to prove that part is configurable too,
 on both the JS side (see notes.html) and here.
 
@@ -96,7 +96,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             got, err = chat.transcript((q.get("session") or [""])[0], (q.get("cwd") or [""])[0])
             return self._json(404 if err else 200, err or got)
         # The widget's own JS and CSS — same live-from-the-folder approach
-        # to-dos uses, so both hosts stay proof that nothing here needs
+        # the first host uses, so both hosts stay proof that nothing here needs
         # copying in.
         if path.startswith("/ai-chat/"):
             rel = path[len("/ai-chat/"):]
@@ -140,7 +140,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._json(400 if err else 200, err or got)
         if path == "/notes/key":
             # Mints a chat key for a note that doesn't have one yet, and
-            # persists it — this demo's equivalent of to-dos writing a
+            # persists it — this demo's equivalent of a task app writing a
             # `chat:` tag onto a task line. Every host does this bit itself;
             # ai_chat only mints the key, never where it gets stored.
             if not chat.guard_ok(self):

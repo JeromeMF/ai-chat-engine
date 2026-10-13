@@ -27,7 +27,7 @@
 <body>
 <h1>ai_chat demo</h1>
 <p class="lede">A few notes, each able to carry its own Claude chat thread — proof
-  <code>ai_chat</code> works somewhere other than to-dos. No task board, no drawer,
+  <code>ai_chat</code> works somewhere other than the first host. No task board, no drawer,
   just this page and <code>engine.py</code>.</p>
 <div id="notes"><p class="unavailable">Loading…</p></div>
 
@@ -43,7 +43,7 @@ function esc(s){
 
 let notesById = {};
 
-// A different guard header from to-dos's X-Board, on purpose — proves the
+// A different guard header from the usual X-Board, on purpose — proves the
 // name isn't hardcoded on either side of the module.
 const chat = AIChat.create({
   guardHeader: { name: 'X-Notes-Demo', value: '1' },

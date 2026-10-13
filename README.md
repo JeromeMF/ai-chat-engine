@@ -3,9 +3,8 @@
 Lets any local, single-user tool give a thing it tracks — a task, a ticket, a
 note, a card on a canvas — its own list of Claude Code conversations,
 answering in a modal (or a window it places itself) over the host's own
-page. Pulled out of `to-dos`'s board, which is still the reference
-integration for the modal; `ai_canvas` is the reference integration for the
-Node engine.
+page. The modal was built for a task board and the Node engine for a canvas of
+live sessions.
 
 One piece is required, the rest is optional and a host takes only what it
 needs:
@@ -63,8 +62,7 @@ too.
 ## Installing it as a package
 
 This repo is also `@tiagopedras/ai-chat-engine`. `dist/` is committed, because
-the board and `ai_canvas` read the built files straight off disk and neither
-runs a build for them. After changing anything under `src/`, run `npm run
+hosts can read the built files straight off disk without running a build. After changing anything under `src/`, run `npm run
 build`, which rebuilds the Node engine, the component, the one-file bundle, the
 types and the standalone stylesheet in that order.
 
@@ -125,7 +123,7 @@ conversation continued in the terminal or in Desktop comes back complete.
 
 What *is* kept, in a small JSON file the host points `Engine` at, is an index:
 which session ids sit under which **owner key** — a short id the host mints
-once per group of conversations (a task's `chat:xxxxxx` tag, in `to-dos`).
+once per group of conversations (a task's `chat:xxxxxx` tag, say).
 That file is the only state this module owns.
 
 ## Modes
@@ -140,8 +138,8 @@ else. Bash, NotebookEdit and Task stay removed; Edit and Write come back with
 an allow rule scoped to the cwd, and `--permission-mode dontAsk` refuses any
 edit outside it. A host can name files that stay refused even inside the cwd
 with `Engine(..., write_denies=[...])`, as permission-rule path patterns
-(`to-dos` passes `**/data/*/todo.md`, so every change to a list still goes
-through the board). Gated by the same `"work": true` as `work`. The window
+(for example `**/data/*/todo.md`, so every change to a list still goes
+through the app). Gated by the same `"work": true` as `work`. The window
 offers it as a "Can write" switch in the head when the host passes
 `writeSwitch: true` and the helper's status has `work` on; flipping it takes
 effect from the next message, which carries a line telling Claude writing is
@@ -195,7 +193,7 @@ route to answer it yet.
 Whatever serves these routes, the chat window expects exactly this
 shape. Route paths are configurable per instance (`AIChat.create({endpoints:
 {...}})` on the JS side, whatever the host's router does on the server
-side) — these are the defaults, and what `to-dos` uses them as.
+side) — these are the defaults, and what the first host uses.
 
 Every POST must carry a guard header (default `X-Board: 1`, also
 configurable) or be refused. A page on another origin can still POST to
@@ -219,7 +217,7 @@ under — pass `''` for a run that doesn't belong to anything.
 
 ```python
 import sys, os
-sys.path.insert(0, os.path.expanduser("~/Code/ai_chat"))
+sys.path.insert(0, os.path.expanduser("~/projects/ai_chat"))
 from engine import Engine
 from http_glue import ChatEndpoints
 
@@ -249,7 +247,7 @@ if path == "/claude/forget":
 ```
 
 Serve `dist/ai-chat.js` and `dist/chat.css` (or `chat.standalone.css`) as static files under
-whatever prefix the host likes (`to-dos` uses `/ai-chat/...`, reading
+whatever prefix the host likes (for example `/ai-chat/...`, reading
 straight from this folder rather than copying it in).
 
 ## Wiring it into a host with no HTTP (a custom transport)
@@ -412,7 +410,7 @@ larger question than `engine.py` does, not a faster version of the same one
 — see "Two engines, one contract" below for where they overlap and where
 they don't.
 
-Ported out of `ai_canvas`, which drove this split: it wanted to fold its own
+Ported out of a canvas app, which drove this split: it wanted to fold its own
 card-tracking and chat backend into this package rather than keep
 reinventing them per host. Stripped out along the way, per the boundary
 that split agreed on — a host's own business, not a session's:
@@ -477,7 +475,7 @@ a WebSocket, whatever). Everything moves through these three callbacks
 rather than a return value, because a session's own state changes on its
 own schedule, not on the host's.
 
-What every host had to build itself in `ai_canvas` and now doesn't:
+What every host had to build itself in that canvas app and now doesn't:
 throttled event batching (a card that's `needs_you` or `error` flushes
 immediately; anything else coalesces every 120ms so a dozen live sessions
 don't repaint faster than anything can usefully draw), orphan detection
@@ -516,8 +514,8 @@ Same `ask`-only limit `engine.py` has today — there's no config path to turn
 ### The two store ports
 
 Persistence is two small interfaces rather than a format this package
-owns — a host answers each however it already saves things (`ai_canvas`'s
-own `board.json`, adapted, in its case).
+owns — a host answers each however it already saves things (a canvas app's
+own `board.json`, adapted, say).
 
 ```ts
 interface CardStore {
@@ -550,7 +548,7 @@ A card carries two ids: `id`, assigned the moment it's created, and
 on every `SessionCard` this engine emits, on purpose — a host mapping cards
 onto its own grouping needs whichever one its own records were filed
 under, and that can be either one depending on when the filing happened.
-`ai_canvas` learned this the expensive way: project membership was
+The canvas app learned this the expensive way: project membership was
 re-derived from the card's `id` alone in four different places, and a
 session assigned to a project *after* it already had a `sessionId` fell
 through every one of them. Resolve `card.sessionId ?? card.id` once, in one
@@ -581,8 +579,7 @@ the `aic-` class names on the frame. Tenon gained `Window`, `Markdown`,
 `EditableText`, `Disclosure`, `LinkButton`, a glyph `Spinner` and a `bare` Modal
 to carry it, at v0.7.0.
 
-Two integrations exist. `to-dos`'s board, on the `claude-from-the-card`
-branch, is the real one — a task's `chat:` tag, its own state object, its
+Two integrations exist. A task board is the real one — a task's `chat:` tag, its own state object, its
 own drawer. `examples/notes_demo.py` is a second, deliberately unrelated app
 built to prove the module actually works somewhere else: a different guard
 header, a different owner shape, no task board at all. Both were verified
@@ -599,6 +596,6 @@ its pieces are individually verified — `describeTool`, `unwrapSlashCommand`,
 `checkAuth` against a real installed CLI (a real authenticated response
 came back), `SessionPool`/`ChatEngine` constructing and wiring correctly
 against fake store implementations. Not yet exercised: a real session
-actually spawned through `SessionPool.create()` end to end, and `ai_canvas`
+actually spawned through `SessionPool.create()` end to end, and the canvas app
 adopting it as its own main-process layer, which is the integration that
 will actually prove the `CardStore`/`ChatStore` ports are the right shape.

@@ -10,7 +10,7 @@ from and what Claude Desktop imports, so this only ever reads it back.
 
 No web framework here on purpose. A host wires this into whatever server it
 already runs — see `http_glue.py` for the piece that does that over
-`http.server`, which is what `to-dos` uses.
+`http.server`, which a plain Python host can use.
 
 Three modes, and the difference between them is the whole of the safety story:
 
@@ -46,7 +46,7 @@ import sys
 import threading
 
 SESSION_ID = re.compile(r"^[0-9a-fA-F-]{36}$")
-# What an owner key may look like. The default matches to-dos's `chat:xxxxxx`
+# What an owner key may look like. The default matches a `chat:xxxxxx`
 # tags (base36, 4-12 chars) but any short slug-shaped id fits it.
 OWNER_KEY = re.compile(r"^[a-z0-9_-]{1,64}$")
 
@@ -66,7 +66,7 @@ WRITE_TOOL_DENIES = ["Bash", "NotebookEdit", "Task"]
 
 # Files a write run may not edit even inside its cwd, as permission-rule path
 # patterns (gitignore-style, relative to the cwd). Empty by default: a host
-# names its own through `write_denies`, as to-dos does for data/*/todo.md.
+# names its own through `write_denies`, as a task app might for its todo file.
 WRITE_DENIES = []
 
 MODES = ("ask", "write", "work")
@@ -429,7 +429,7 @@ class Engine:
         engine's own sessions.json. The Node engine already has an
         equivalent, `pastSessions()`; this is the Python side of the same
         thing, for a host that wants to offer "attach a session that started
-        elsewhere" — see AI-CANVAS.md in to-dos for why that exists.
+        elsewhere".
 
         Reads only as much of each transcript as it takes to find the
         working directory and the first thing that was actually asked, never

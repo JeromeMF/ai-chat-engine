@@ -2,7 +2,7 @@
 
 `notes_demo.py` is a second, unrelated app on top of `ai_chat` — three
 hardcoded notes, each able to carry its own Claude chat thread. It exists to
-prove the module actually works somewhere other than `to-dos`, not to be a
+prove the module actually works somewhere other than the first host, not to be a
 real notes app: no editing, no deleting, nothing saved except which chat key
 belongs to which note and the sessions themselves.
 
@@ -13,11 +13,11 @@ python3 examples/notes_demo.py
 ```
 
 Opens `http://127.0.0.1:8766/notes.html`. It reads `engine.py` and
-`http_glue.py` straight from the parent folder, the same way `to-dos` does,
+`http_glue.py` straight from the parent folder, the same way a real host does,
 and serves `dist/ai-chat.js` + `chat.standalone.css` live rather than copying them in.
 Run `npm run build` first if `dist/` is not there.
 
-Two things it does differently from `to-dos`, both deliberately, to prove
+Two things it does differently from that host, both deliberately, to prove
 they're actually configurable and not hardcoded assumptions baked into the
 module:
 
@@ -29,4 +29,4 @@ module:
   markdown line. `ai_chat` never sees either; it only ever sees the key.
 
 `data/` here is this demo's own state (`claude.json`, `sessions.json`,
-`notes.json`) and is gitignored, same as `to-dos/data/`.
+`notes.json`) and is gitignored, same as a real host's `data/`.

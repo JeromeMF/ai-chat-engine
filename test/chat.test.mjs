@@ -132,7 +132,7 @@ await t.until(`w.available()`);
 await t.evaluate(`
   w.growFrom(document.getElementById('card').getBoundingClientRect());
   w.setRect({ x: 300, y: 120, width: 640, height: 560 });
-  w.setHeader({ title: 'Reading the survey notes', subtitle: 'Design oversight · ~/Code/notes', runState: 'running' });
+  w.setHeader({ title: 'Reading the survey notes', subtitle: 'Design oversight · ~/projects/my-app', runState: 'running' });
   w.openSession('c1', 'c1', 's-old');
 `);
 ok('a windowed chat is a Tenon window, not a modal', await t.until(`!!document.querySelector('.tenon-window.aic-box') && !document.querySelector('.tenon-modal__scrim')`));
@@ -212,7 +212,7 @@ await t.evaluate(`d1.destroy(); d2.destroy()`);
 
 /* ---- the write switch ---- */
 ok('no write switch unless the host asks for one', await t.evaluate(`(() => { const x = AIChat.create({ transport: makeTransport() }); x.loadStatus(); x.openNew('t4','k4',''); return new Promise(r => setTimeout(() => { const n = document.querySelectorAll('.aic-write').length; x.destroy(); r(n === 0); }, 300)); })()`));
-ok('no write switch while the helper has work off', await t.evaluate(`(() => { const x = AIChat.create({ transport: Object.assign(makeTransport(), { status: async () => ({ available: true, home: '/Users/x/Code', work: false }) }), writeSwitch: true }); x.loadStatus(); x.openNew('t4','k4',''); return new Promise(r => setTimeout(() => { const n = document.querySelectorAll('.aic-write').length; x.destroy(); r(n === 0); }, 300)); })()`));
+ok('no write switch while the helper has work off', await t.evaluate(`(() => { const x = AIChat.create({ transport: Object.assign(makeTransport(), { status: async () => ({ available: true, home: '/home/x/projects', work: false }) }), writeSwitch: true }); x.loadStatus(); x.openNew('t4','k4',''); return new Promise(r => setTimeout(() => { const n = document.querySelectorAll('.aic-write').length; x.destroy(); r(n === 0); }, 300)); })()`));
 await t.evaluate(`
   window.__payloads.length = 0;
   window.ws = AIChat.create({ transport: makeTransport(), windowed: true, writeSwitch: true });
