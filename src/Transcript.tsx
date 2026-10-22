@@ -82,6 +82,12 @@ function TurnView({ turn, index, showActs, inlineTools, onRetry, onEdit }: TurnP
       <div className="aic-mine">
         <div className="aic-minewrap">
           <div className="aic-bubble"><Markdown inline>{turn.ask}</Markdown></div>
+          {/* What went with it, by name only: the context itself was for Claude. */}
+          {!!turn.mentions?.length && (
+            <div className="aic-mentions">
+              {turn.mentions.map((m, i) => <Pill key={i} className="aic-mention" title={m.link || undefined}>{m.title} added to context</Pill>)}
+            </div>
+          )}
           {showActs && (
             <div className="aic-mineacts">
               <CopyButton text={turn.ask} />

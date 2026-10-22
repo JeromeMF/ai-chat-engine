@@ -290,6 +290,126 @@ await t.evaluate(`clearInterval(orbTimer)`);
 ok('  starting, thinking and writing each get their own orb', await t.evaluate(`['Thinking…', 'Solving…', 'Composing…', 'Listening…'].every((k) => orbs.includes(k))`), await t.evaluate(`orbs.join(' → ')`));
 await t.evaluate(`ob.destroy()`);
 
+/* ---- @ mentions ---- */
+await t.evaluate(`
+  window.__payloads.length = 0; window.__sent.length = 0;
+  window.plain = AIChat.create({ transport: makeTransport(), onSend: (s) => __sent.push(s) });
+  plain.loadStatus();
+`);
+await t.until(`plain.available()`);
+await t.evaluate(`plain.openNew('t7', 'k7', '')`);
+await t.until(`document.activeElement?.classList.contains('aic-input')`);
+await t.type('ask @someone about it');
+ok('without mentions, @ is just a character', await t.evaluate(`!document.querySelector('.aic-picker') && !document.querySelector('.aic-input').hasAttribute('role') && document.querySelector('.aic-input').value === 'ask @someone about it'`));
+await t.key('Enter');
+ok('  and the prompt is exactly what was typed', await t.until(`__payloads.length === 1 && __payloads[0].prompt === 'ask @someone about it' && __sent[0].mentions.length === 0`));
+ok('  with no chips under the bubble', await t.until(`!!document.querySelector('.aic-bubble') && !document.querySelector('.aic-mentions')`));
+await t.until(`!!document.querySelector('.aic-send')`, 8000);
+await t.evaluate(`plain.destroy()`);
+
+await t.evaluate(`
+  window.__payloads.length = 0; window.__sent.length = 0;
+  window.TASKS = [
+    { id: 't1', title: 'Fix the login bug', context: 'Card text: people cannot log in on Safari.', link: 'http://board/#t1' },
+    { id: 't2', title: 'Write the "release" notes', context: 'Notes card' },
+    { id: 't3', title: 'Fix the footer', context: 'Footer card' },
+  ];
+  window.mq = [];
+  window.mn = AIChat.create({
+    transport: makeTransport(),
+    mentions: (q) => { mq.push(q); return TASKS.filter((x) => x.title.toLowerCase().includes(q.toLowerCase())); },
+    onSend: (s) => __sent.push(s),
+  });
+  mn.loadStatus();
+`);
+await t.until(`mn.available()`);
+await t.evaluate(`mn.openNew('t8', 'k8', '')`);
+await t.until(`document.activeElement?.classList.contains('aic-input')`);
+await t.type('look at @');
+const picked = () => t.evaluate(`[...document.querySelectorAll('.aic-pick')].map(o => o.textContent + (o.getAttribute('aria-selected') === 'true' ? '*' : '')).join('|')`);
+ok('typing @ opens the picker with everything on offer', await t.until(`document.querySelectorAll('.aic-picker [role="option"]').length === 3`) && await picked() === 'Fix the login bug*|Write the "release" notes|Fix the footer', await picked());
+ok('  the box says the list is open', await t.evaluate(`document.querySelector('.aic-input').getAttribute('aria-expanded') === 'true'`));
+await t.type('fix');
+ok('  what follows narrows it through the host', await t.until(`document.querySelectorAll('.aic-pick').length === 2 && mq[mq.length - 1] === 'fix'`));
+await t.key('ArrowDown');
+ok('  the arrows move the highlight', await t.until(`document.querySelector('.aic-pick[aria-selected="true"]')?.textContent === 'Fix the footer'`));
+await t.key('Escape');
+ok('  Escape closes the picker and not the window', await t.until(`!document.querySelector('.aic-picker')`) && await t.evaluate(`mn.isOpen() && !!document.querySelector('.tenon-modal__box')`));
+await t.type(' l');
+ok('  and it stays shut for that @', await t.evaluate(`!document.querySelector('.aic-picker')`));
+
+await t.evaluate(`document.querySelector('.aic-input').select()`);
+await t.type('Compare @fix');
+await t.until(`document.querySelectorAll('.aic-pick').length === 2`);
+await t.key('ArrowDown');
+await t.key('Tab', 'Tab');
+ok('Tab picks: a chip on the composer, and the @fix comes out of the box', await t.until(`[...document.querySelectorAll('.aic-chip .aic-chiptext')].map(c => c.textContent).join() === 'Fix the footer'`) && await t.evaluate(`document.querySelector('.aic-input').value === 'Compare ' && !document.querySelector('.aic-picker')`));
+ok('  the caret stays in the box', await t.evaluate(`document.activeElement?.classList.contains('aic-input')`));
+await t.type('@rel');
+await t.until(`document.querySelectorAll('.aic-pick').length === 1`);
+await t.key('Enter');
+ok('Enter picks while the picker is open, and sends nothing', await t.until(`document.querySelectorAll('.aic-chip').length === 2`) && await t.evaluate(`__payloads.length === 0`));
+await t.evaluate(`document.querySelector('.aic-chip .aic-unattach').click()`);
+ok('a chip comes off with its ×', await t.until(`[...document.querySelectorAll('.aic-chiptext')].map(c => c.textContent).join() === 'Write the "release" notes'`));
+await t.type('@login');
+await t.until(`document.querySelectorAll('.aic-pick').length === 1`);
+await t.evaluate(`document.querySelector('.aic-pick').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+ok('clicking an option picks it too', await t.until(`document.querySelectorAll('.aic-chip').length === 2`));
+await t.evaluate(`mn.attach(TASKS[1])`);
+ok('  the same item is attached once', await t.evaluate(`mn.attached().length === 2`));
+await t.type('these');
+await t.key('Enter');
+ok('Enter sends once the picker is shut', await t.until(`__payloads.length === 1`));
+ok('  the prompt is the message, then each item\'s context and link', await t.evaluate(`(() => { const p = __payloads[0].prompt; return p.startsWith('Compare these\\n\\n<attached>\\n') && p.includes('<item title="Write the &quot;release&quot; notes">\\nNotes card\\n</item>') && p.includes('<item title="Fix the login bug" link="http://board/#t1">\\nCard text: people cannot log in on Safari.\\n</item>') && p.endsWith('</attached>') })()`));
+ok('  onSend hears the typed words and the items', await t.evaluate(`__sent[0].ask === 'Compare these' && __sent[0].mentions.map(m => m.id).join() === 't2,t1'`));
+ok('  the bubble shows only what was typed', await t.until(`document.querySelector('.aic-bubble')?.textContent === 'Compare these'`));
+ok('  with a chip for each item under it', await t.evaluate(`[...document.querySelectorAll('.aic-mentions .tenon-pill')].map(p => p.textContent).join('|') === 'Write the "release" notes added to context|Fix the login bug added to context'`));
+ok('  and the composer is clear of them', await t.evaluate(`!document.querySelector('.aic-chip') && mn.attached().length === 0`));
+await t.until(`!!document.querySelector('.aic-send')`, 8000);
+await t.shot('/tmp/aic-mentions.png');
+await t.evaluate(`[...document.querySelectorAll('.aic-mineacts .tenon-button')].find(b=>b.textContent==='Retry').click()`);
+ok('Retry sends the items again', await t.until(`__payloads.length === 2 && __payloads[1].prompt === __payloads[0].prompt`));
+await t.until(`!!document.querySelector('.aic-send')`, 8000);
+await t.evaluate(`[...document.querySelectorAll('.aic-mineacts .tenon-button')].find(b=>b.textContent==='Edit').click()`);
+ok('Edit puts the items back on the composer with the words', await t.until(`document.querySelectorAll('.aic-chip').length === 2 && document.querySelector('.aic-input').value === 'Compare these'`));
+const lastPrompt = await t.evaluate(`__payloads[0].prompt`);
+
+await t.evaluate(`mn.closeChat()`);
+await t.until(`!mn.isOpen()`);
+await t.evaluate(`mn.openNew('t9', 'k9', '', { attach: [TASKS[0]] })`);
+ok('openNew with attach opens with the item on the composer', await t.until(`[...document.querySelectorAll('.aic-chiptext')].map(c => c.textContent).join() === 'Fix the login bug' && mn.attached().length === 1`));
+await t.until(`document.activeElement?.classList.contains('aic-input')`);
+await t.type('what is left?');
+await t.key('Enter');
+ok('  and its first message carries it', await t.until(`__payloads.length === 3 && __payloads[2].prompt.startsWith('what is left?\\n\\n<attached>') && __payloads[2].prompt.includes('Card text: people cannot log in')`));
+await t.until(`!!document.querySelector('.aic-send')`, 8000);
+await t.evaluate(`mn.destroy()`);
+
+await t.evaluate(`
+  window.disk = AIChat.create({ transport: Object.assign(makeTransport(), { transcript: async () => ({ turns: [{ ask: ${JSON.stringify(lastPrompt)}, reply: 'done' }] }) }) });
+  disk.loadStatus();
+`);
+await t.until(`disk.available()`);
+await t.evaluate(`disk.openSession('t1', 'k1', 's-old')`);
+ok('read back off disk, the bubble is the typed words again', await t.until(`document.querySelector('.aic-bubble')?.textContent === 'Compare these'`), await t.evaluate(`document.querySelector('.aic-bubble')?.textContent`));
+ok('  and the items are chips again', await t.evaluate(`[...document.querySelectorAll('.aic-mentions .tenon-pill')].map(p => p.textContent).join('|') === 'Write the "release" notes added to context|Fix the login bug added to context'`));
+await t.evaluate(`disk.destroy()`);
+
+await t.evaluate(`
+  window.mw = AIChat.create({ transport: makeTransport(), windowed: true, mentions: () => TASKS });
+  mw.loadStatus();
+`);
+await t.until(`mw.available()`);
+await t.evaluate(`mw.openNew('t10', 'k10', '')`);
+await t.until(`!!document.querySelector('.tenon-window .aic-input')`);
+await t.evaluate(`document.querySelector('.aic-input').focus()`);
+await t.type('@');
+await t.until(`!!document.querySelector('.aic-picker')`);
+await t.key('Escape');
+await wait(400);
+ok('in a window too, Escape closes only the picker', await t.evaluate(`!document.querySelector('.aic-picker') && mw.isOpen() && !!document.querySelector('.tenon-window')`));
+await t.evaluate(`mw.destroy()`);
+
 const errors = t.logs.filter((l) => /^EXC|^error/i.test(l));
 ok('no console errors', errors.length === 0, errors.join(' | '));
 t.close();

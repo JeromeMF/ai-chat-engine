@@ -25,8 +25,23 @@ export type FlowSegment = {
     kind: 'text';
     text: string;
 };
+/** Something a person can attach to a message: a task, a note, a ticket.
+    Picked with `@` in the composer, or attached by the host when it opens a
+    chat. The window shows only the title; Claude gets the context and link. */
+export interface Mention {
+    id: string;
+    /** What the picker lists and the chip says. */
+    title: string;
+    /** Everything Claude should know about it, the full text of the card. Never drawn in the window. */
+    context?: string;
+    /** Where it lives, given to Claude after the context. */
+    link?: string;
+}
 export interface Turn {
+    /** What was typed. Anything attached is carried in `mentions`, not here. */
     ask: string;
+    /** What was attached to this message, in the order it was attached. */
+    mentions?: Mention[];
     reply: string;
     /** One-line labels of every tool call, for the collapsed trace. */
     tools: string[];
@@ -130,6 +145,7 @@ export interface ChatOptions {
         ask: string;
         prompt: string;
         mode: ChatMode;
+        mentions: Mention[];
     }) => void;
     placeholder?: string;
     /** Off for a host that already is a Claude client, where the link would point back at itself. */
@@ -153,6 +169,13 @@ export interface ChatOptions {
     /** Makes the title editable in place and hands back what was typed. */
     onRename?: (title: string) => void;
     ownerLabel?: (owner: string) => string;
+    /** The things a person can mention. Typing `@` in the composer opens a
+        picker over it, filled from this as they type: given what follows the
+        `@` (empty at first), return the matches, best first. Called on every
+        keystroke, so keep it to a filter over what the host already holds.
+        A pick becomes an attachment, never text in the box. Without it, `@` is
+        just a character. */
+    mentions?: (query: string) => Mention[];
     /** What kind of conversation this host opens. */
     mode?: ChatMode;
     /** A "Can write" switch in the head, flipping the open conversation between

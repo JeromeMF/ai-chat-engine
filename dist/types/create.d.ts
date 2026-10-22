@@ -1,4 +1,4 @@
-import type { ChatOptions } from './types';
+import type { ChatOptions, Mention } from './types';
 export declare function create(opts?: ChatOptions): {
     loadStatus: () => Promise<void>;
     loadSessions: () => Promise<void>;
@@ -10,8 +10,10 @@ export declare function create(opts?: ChatOptions): {
     forget: (ownerKey: string, sessionId: string) => Promise<void>;
     isOpen: () => boolean;
     closeChat: () => void;
+    /** `attach` opens it with those items already waiting to go with the first message. */
     openNew(ownerId: string, ownerKey: string, seed?: string, o?: {
         preface?: (ask: string) => string;
+        attach?: Mention[];
     }): void;
     openSession(ownerId: string, ownerKey: string, sessionId: string): void;
     growFrom: (rect: import("./types").Origin | DOMRect | import("./types").Rect | null) => void;
@@ -28,6 +30,12 @@ export declare function create(opts?: ChatOptions): {
     setWrite: (on: boolean) => void;
     /** Whether the open conversation is in write mode. */
     canWrite: () => boolean;
+    /** Puts an item on the open conversation's composer, to go with the next message, as if picked with `@`. Once per id. */
+    attach: (m: Mention) => void;
+    /** Takes an item back off the composer before it is sent. */
+    detach: (id: string) => void;
+    /** What is waiting to go with the next message. */
+    attached: () => Mention[];
     running: () => boolean;
     /** The session the open conversation is on, or '' for a new one not yet sent or nothing open. */
     session: () => string;

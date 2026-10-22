@@ -3,7 +3,7 @@ import { DEFAULT_ENDPOINTS, makeDefaultTransport } from './transport';
 import { dockJoin, dockLeave, dockNotify, dockRectFor, dockSubscribe } from './dock';
 import type { DockState } from './dock';
 import type {
-  ChatMode, ChatOptions, ChatStatus, Header, Origin, PermissionDecision, PermissionRequest, Rect,
+  ChatMode, ChatOptions, ChatStatus, Header, Mention, Origin, PermissionDecision, PermissionRequest, Rect,
   SessionRow, SessionsIndex, Transport, Turn,
 } from './types';
 
@@ -33,6 +33,34 @@ function defaultWriteNote(on: boolean): string {
   return on
     ? '(Writing is now switched on for this conversation: you can create and edit files inside the working directory, and nothing outside it. Anything said earlier about not being able to write no longer holds.)'
     : '(Writing is now switched off again for this conversation: you can read, but not create or edit files.)';
+}
+
+/* What goes to Claude for a message with things attached: the message, then
+   one block holding each item's context and link. Tagged rather than written
+   as prose so Claude can tell where the message ends and the material starts,
+   and so splitMentions() can take it back apart when the conversation is read
+   off disk, where the prompt is all there is. */
+const MENTIONS_OPEN = '\n\n<attached>\n';
+const MENTIONS_CLOSE = '</attached>';
+const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const unattr = (v: string) => v.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+function withMentions(prompt: string, mentions: Mention[]): string {
+  if (!mentions.length) return prompt;
+  const items = mentions.map((m) =>
+    `<item title="${attr(m.title)}"${m.link ? ` link="${attr(m.link)}"` : ''}>\n${m.context || ''}\n</item>\n`);
+  return prompt + MENTIONS_OPEN + 'The person attached these to the message above.\n\n' + items.join('\n') + MENTIONS_CLOSE;
+}
+
+function splitMentions(text: string): { ask: string; mentions: Mention[] } {
+  const at = text.lastIndexOf(MENTIONS_OPEN);
+  if (at < 0 || !text.endsWith(MENTIONS_CLOSE)) return { ask: text, mentions: [] };
+  const mentions: Mention[] = [];
+  const re = /<item title="([^"]*)"(?: link="([^"]*)")?>\n([\s\S]*?)\n<\/item>/g;
+  for (let m: RegExpExecArray | null; (m = re.exec(text.slice(at)));) {
+    mentions.push({ id: 'disk-' + mentions.length, title: unattr(m[1]), link: m[2] ? unattr(m[2]) : undefined, context: m[3] });
+  }
+  return { ask: text.slice(0, at), mentions };
 }
 
 interface Run {
@@ -65,6 +93,8 @@ interface Current {
   modeNote: string;
   /** Wraps the first message only, then clears. */
   preface: ((ask: string) => string) | null;
+  /** Waiting to go with the next message, then cleared. */
+  attached: Mention[];
   turns: Turn[] | null;
   loading: boolean;
   loadErr?: string;
@@ -112,6 +142,10 @@ export interface ChatView {
   writeSwitch: boolean;
   /** Where the switch sits: the open conversation is in write mode. */
   canWrite: boolean;
+  /** Whether the host passed `mentions`, so `@` opens the picker. */
+  mentionable: boolean;
+  /** What goes with the next message. */
+  attached: Mention[];
   presentation: {
     rect: Rect | null; growFrom: Origin | null; zIndex: number | undefined; active: boolean; peeked: boolean;
     /** Docked to the bottom edge as a bar or a panel, or 'none' for the ordinary modal or window. */
@@ -251,14 +285,16 @@ export class ChatController {
 
   /* ---- opening and closing ---- */
 
-  private openInternal(owner: string, key: string, sessionId: string, seed: string, preface?: (ask: string) => string): void {
+  private openInternal(owner: string, key: string, sessionId: string, seed: string, preface?: (ask: string) => string, attach?: Mention[]): void {
     if (this.closeTimer) { clearTimeout(this.closeTimer); this.closeTimer = null; }
     this.closing = false;
     this.current = {
       owner, key, session: sessionId || '', seed: seed || '', mode: this.defaultMode, modeNote: '',
       preface: typeof preface === 'function' ? preface : null,
+      attached: [],
       turns: null, loading: false, run: this.runFor(sessionId),
     };
+    (attach || []).forEach((m) => this.addAttached(m));
     this.openId++;
     /* Grown out of the rect the host named, once. The next open starts plain
        unless growFrom() is called again. */
@@ -273,9 +309,10 @@ export class ChatController {
      open would send it before anyone had a chance to fill it in.
      `preface(ask)` returns what actually goes to Claude on the first message,
      given what was typed. The box still opens on `seed` (usually nothing) and
-     the transcript still shows the typed words. */
-  openNew = (ownerId: string, ownerKey: string, seed?: string, opts?: { preface?: (ask: string) => string }): void =>
-    this.openInternal(ownerId, ownerKey, '', seed || '', opts?.preface);
+     the transcript still shows the typed words. `attach` opens it with those
+     items already on the composer, as if they had been picked with `@`. */
+  openNew = (ownerId: string, ownerKey: string, seed?: string, opts?: { preface?: (ask: string) => string; attach?: Mention[] }): void =>
+    this.openInternal(ownerId, ownerKey, '', seed || '', opts?.preface, opts?.attach);
 
   openSession = (ownerId: string, ownerKey: string, sessionId: string): void =>
     this.openInternal(ownerId, ownerKey, sessionId, '');
@@ -316,6 +353,9 @@ export class ChatController {
       const data = await this.transport.transcript(sessionId, cwd);
       if (!this.current || this.current.session !== sessionId) return;
       this.current.turns = data.toobig ? [] : data.turns.map((t): Turn => {
+        /* On disk the prompt is all there is, attachments and all. Taken
+           apart again so the bubble shows what was typed, as it did live. */
+        const { ask, mentions } = splitMentions(t.ask);
         const tools = (t.tools || []).map((x) => toolLabel(x.name, x.input, cwd));
         /* `parts` is `reply` and `tools` again, in the order Claude actually
            produced them. It is optional, since not every backend sends it
@@ -329,7 +369,7 @@ export class ChatController {
               ...tools.map((label) => ({ kind: 'tool' as const, label })),
               ...(t.reply ? [{ kind: 'text' as const, text: t.reply }] : []),
             ];
-        return { ask: t.ask, reply: t.reply || '', error: '', detail: '', cost: 0, tools, flow };
+        return { ask, mentions, reply: t.reply || '', error: '', detail: '', cost: 0, tools, flow };
       });
       this.current.toobig = !!data.toobig;
     } catch {
@@ -431,6 +471,7 @@ export class ChatController {
 
   private async startRun(spec: {
     owner: string; key: string; session: string; ask: string; prompt?: string; title: string; mode: ChatMode; turns: Turn[];
+    mentions?: Mention[];
   }): Promise<void> {
     const run: Run = this.runs['n' + ++this.runCounter] = {
       owner: spec.owner, key: spec.key, session: spec.session || '',
@@ -445,7 +486,7 @@ export class ChatController {
        where the host puts the document being discussed in front of the
        sentence. Keeping them apart is what lets the window show the sentence
        rather than the document nobody typed. */
-    const turn: Turn = { ask: spec.ask, reply: '', tools: [], flow: [], error: '', detail: '', cost: 0 };
+    const turn: Turn = { ask: spec.ask, mentions: spec.mentions || [], reply: '', tools: [], flow: [], error: '', detail: '', cost: 0 };
     run.turns.push(turn);
     if (this.current && this.current.owner === run.owner) this.current.run = run;
     this.emit();
@@ -486,9 +527,14 @@ export class ChatController {
       if (c.session) prompt = c.modeNote + '\n\n' + prompt;
       c.modeNote = '';
     }
-    this.opts.onSend?.({ owner: c.owner, key: c.key, session: c.session || '', ask, prompt, mode: c.mode || 'ask' });
+    /* Whatever was attached goes after the message, and only with this one:
+       from here on it is in the conversation. */
+    const mentions = c.attached;
+    c.attached = [];
+    prompt = withMentions(prompt, mentions);
+    this.opts.onSend?.({ owner: c.owner, key: c.key, session: c.session || '', ask, prompt, mode: c.mode || 'ask', mentions: mentions.slice() });
     void this.startRun({
-      owner: c.owner, key: c.key, session: c.session, ask, prompt,
+      owner: c.owner, key: c.key, session: c.session, ask, prompt, mentions,
       /* A brand new chat takes its name from the first thing asked in it. A
          resumed one keeps the name it already has. */
       title: (this.sessionsFor(c.key).find((s) => s.id === c.session) || {}).title || chatTitle(ask),
@@ -518,16 +564,56 @@ export class ChatController {
     const turn = this.currentTurns()[i];
     const run = this.currentRun();
     if (!turn || (run && run.running)) return;
+    const mentions = turn.mentions || [];
     void this.startRun({
-      owner: c.owner, key: c.key, session: c.session, ask: turn.ask,
+      owner: c.owner, key: c.key, session: c.session, ask: turn.ask, mentions, prompt: withMentions(turn.ask, mentions),
       title: (this.sessionsFor(c.key).find((s) => s.id === c.session) || {}).title || chatTitle(turn.ask),
       mode: c.mode || 'ask',
       turns: run ? run.turns : c.turns || [],
     });
   };
 
-  /** What to put back in the composer for a turn's Edit. */
-  editText = (i: number): string => this.currentTurns()[i]?.ask ?? '';
+  /** What to put back in the composer for a turn's Edit. Puts back what the turn carried, too. */
+  editText = (i: number): string => {
+    const turn = this.currentTurns()[i];
+    if (!turn) return '';
+    if (this.current && turn.mentions?.length) {
+      this.current.attached = [];
+      turn.mentions.forEach((m) => this.addAttached(m));
+      this.emit();
+    }
+    return turn.ask;
+  };
+
+  /* ---- mentions ----
+     What the host offers, and what is waiting to go with the next message. An
+     item is attached once however often it is picked. attach() works without
+     `mentions` too, for a host that attaches things itself and offers no
+     picker. */
+
+  findMentions = (query: string): Mention[] => {
+    if (!this.opts.mentions) return [];
+    try {
+      const found = this.opts.mentions(query);
+      return Array.isArray(found) ? found.filter((m) => m && m.id && m.title) : [];
+    } catch { return []; }
+  };
+
+  private addAttached(m: Mention): boolean {
+    const c = this.current;
+    if (!c || !m || !m.id || !m.title || c.attached.some((a) => a.id === m.id)) return false;
+    c.attached.push({ ...m });
+    return true;
+  }
+
+  attach = (m: Mention): void => { if (this.addAttached(m)) this.emit(); };
+
+  detach = (id: string): void => {
+    const c = this.current;
+    if (!c) return;
+    const next = c.attached.filter((a) => a.id !== id);
+    if (next.length !== c.attached.length) { c.attached = next; this.emit(); }
+  };
 
   /* Consumed once per open. A seed only means something on a conversation
      with nothing said in it yet. */
@@ -710,6 +796,8 @@ export class ChatController {
       pinned: this.pin,
       writeSwitch: !!c && this.writeAllowed(),
       canWrite: !!c && c.mode === 'write',
+      mentionable: typeof this.opts.mentions === 'function',
+      attached: c ? c.attached.slice() : [],
       presentation: {
         rect: this.rect, growFrom: this.growOrigin, zIndex: this.zIndex, active: this.active, peeked: this.peeked,
         dock: this.dock, dockRect: this.dock === 'none' ? null : dockRectFor(this),

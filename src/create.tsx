@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import type { Root } from 'react-dom/client';
 import { ChatController } from './controller';
 import { ChatWindow } from './ChatWindow';
-import type { ChatOptions } from './types';
+import type { ChatOptions, Mention } from './types';
 
 /* The imperative way in, for a page that is not a React app: plain
    scripts, or a card's window in a canvas that creates one per card.
@@ -45,7 +45,8 @@ export function create(opts: ChatOptions = {}) {
     forget: controller.forget,
     isOpen: controller.isOpen,
     closeChat: controller.closeChat,
-    openNew(ownerId: string, ownerKey: string, seed?: string, o?: { preface?: (ask: string) => string }) {
+    /** `attach` opens it with those items already waiting to go with the first message. */
+    openNew(ownerId: string, ownerKey: string, seed?: string, o?: { preface?: (ask: string) => string; attach?: Mention[] }) {
       mount();
       controller.openNew(ownerId, ownerKey, seed, o);
     },
@@ -67,6 +68,12 @@ export function create(opts: ChatOptions = {}) {
     setWrite: controller.setWrite,
     /** Whether the open conversation is in write mode. */
     canWrite: (): boolean => controller.getSnapshot().canWrite,
+    /** Puts an item on the open conversation's composer, to go with the next message, as if picked with `@`. Once per id. */
+    attach: controller.attach,
+    /** Takes an item back off the composer before it is sent. */
+    detach: controller.detach,
+    /** What is waiting to go with the next message. */
+    attached: (): Mention[] => controller.getSnapshot().attached,
     running: controller.running,
     /** The session the open conversation is on, or '' for a new one not yet sent or nothing open. */
     session: (): string => controller.getSnapshot().session,

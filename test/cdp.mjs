@@ -1,9 +1,16 @@
 // A tiny Chrome DevTools driver for the tests: launches headless Chrome on a URL and exposes
 // evaluate, until, click, drag, type, key and shot. No dependency, the same approach a host's own tests can use.
 import { spawn } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { existsSync, writeFileSync } from 'node:fs'
+// CHROME_BIN wins when set, otherwise the first of these installed. Any Chromium-based browser will do.
+const BROWSERS = [
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium',
+]
+const browser = () => process.env.CHROME_BIN || BROWSERS.find(p => existsSync(p)) || BROWSERS[0]
 export async function launch(url, { port = 9555, size = '1400,900', profile = '/tmp/cdp-profile-' + port } = {}) {
-  const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', [
+  const chrome = spawn(browser(), [
     '--headless=new', `--remote-debugging-port=${port}`, '--no-first-run', `--user-data-dir=${profile}`,
     `--window-size=${size}`, url], { stdio: 'ignore' })
   let wsUrl

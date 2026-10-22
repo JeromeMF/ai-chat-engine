@@ -124,6 +124,58 @@
 .aic-foot .tenon-textarea { flex: 1; width: auto; min-width: 0; }
 .aic-foot .tenon-button { flex: none; }
 
+/* ---- mentions ----
+   The `@` picker floats over the transcript, just above the composer, and
+   what was picked waits as a row of chips above the box. */
+.aic-foot { position: relative; flex-wrap: wrap; }
+.aic-attached { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: var(--tenon-dimension-075); }
+.aic-chip { max-width: 100%; padding-right: var(--tenon-dimension-050); }
+.aic-chiptext { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.aic-unattach {
+  flex: none;
+  padding: 0 var(--tenon-dimension-050);
+  border: 0;
+  border-radius: var(--tenon-radius-full);
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.aic-unattach:hover { background: var(--tenon-background-hovered); }
+.aic-unattach:focus-visible { outline: 2px solid var(--tenon-stroke-focus); outline-offset: 1px; }
+
+.aic-picker {
+  position: absolute;
+  left: var(--tenon-dimension-175);
+  right: var(--tenon-dimension-175);
+  bottom: calc(100% + var(--tenon-dimension-050));
+  z-index: 1;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--tenon-dimension-050);
+  list-style: none;
+  background: var(--tenon-background-raised);
+  border: 1px solid var(--tenon-stroke-default);
+  border-radius: var(--tenon-radius-lg);
+  box-shadow: var(--tenon-elevation-overlay);
+}
+.aic-pick {
+  padding: var(--tenon-dimension-075) var(--tenon-dimension-125);
+  border-radius: var(--tenon-radius-default);
+  font-size: var(--tenon-text-body-sm-size);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.aic-pick[aria-selected='true'] { background: var(--tenon-background-selected); color: var(--tenon-text-accent); }
+
+/* Under your bubble, what went with it. */
+.aic-mentions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--tenon-dimension-050); }
+.aic-mention { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
 /* ---- docked to the bottom edge ----
    A bar or a panel placed by the dock row, never dragged or resized: no
    grips, and a head that does not offer to be grabbed. */

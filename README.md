@@ -286,6 +286,7 @@ rather than spawning a second `claude` process next to it.
 <script>
   const chat = AIChat.create({
     ownerLabel: id => lookUpSomeTitleFor(id),   // shown under the window's title
+    // mentions: query => [...],                 // what `@` offers, see "Mentioning things with @"
     onSessionsChanged: () => { /* re-render whatever list you show */ },
     // Fires the instant a message is sent, before the run starts, let alone
     // replies, so a host can react to "this conversation just began" without
@@ -318,6 +319,46 @@ calling it by the time it went. `sessionsFor()`, `available()` and the
 actually behind the host. Everything degrades to "no button" rather than an
 error: no CLI on PATH, a host too old to know the routes, a static file server
 with nothing behind it at all.
+
+## Mentioning things with `@`
+
+A host that knows about things worth talking about (tasks on a board, notes,
+tickets) passes `mentions`, and typing `@` in the composer opens a picker over
+it:
+
+```js
+const chat = AIChat.create({
+  mentions: (query) => tasks
+    .filter((t) => t.title.toLowerCase().includes(query.toLowerCase()))
+    .map((t) => ({ id: t.id, title: t.title, context: t.fullText, link: t.url })),
+});
+```
+
+The function is called on every keystroke after the `@`, with what follows it
+(empty at first, spaces allowed), and returns the matches best first. The
+window shows the first eight. It is synchronous on purpose: the picker is a
+filter over what the host already holds, not a search that waits on a network.
+Arrow keys move through it, Enter or Tab picks, Escape closes it and leaves the
+window open, and Enter sends as usual once it is shut. A host that passes no
+`mentions` gets no picker, and `@` is just a character.
+
+A pick is an attachment rather than text in the box. The `@query` comes out
+of the composer and the item waits above it as a chip with a ×, so the person
+writes their sentence without a card's worth of text in the way. On send,
+Claude gets the typed message followed by one `<attached>` block holding each
+item's `context` and `link`. The bubble in the transcript shows only what was
+typed, with a "*title* added to context" chip for each item under it. That
+block is also how a conversation read back off disk is taken apart again, since
+there the prompt is all Claude Code kept: replayed turns show the same bubble
+and chips they did live. Retry sends the items again, and Edit puts them back
+on the composer with the words. `onSend` hears them as `mentions`.
+
+A host can attach things without the picker. `openNew(id, key, seed, { attach:
+[item] })` opens a new conversation with the item already on the composer,
+which is what a "New chat with this task" button wants, and `chat.attach(item)`
+and `chat.detach(id)` do the same on whatever is open. `chat.attached()` says
+what is waiting. An item is attached once however often it is picked or
+passed, and a picked one drops out of the picker.
 
 ## Several open at once, and windowed mode
 

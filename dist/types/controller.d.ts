@@ -1,5 +1,5 @@
 import type { DockState } from './dock';
-import type { ChatOptions, ChatStatus, Header, Origin, PermissionDecision, PermissionRequest, Rect, SessionRow, Turn } from './types';
+import type { ChatOptions, ChatStatus, Header, Mention, Origin, PermissionDecision, PermissionRequest, Rect, SessionRow, Turn } from './types';
 export type StatusLine = {
     kind: 'permission';
 } | {
@@ -46,6 +46,10 @@ export interface ChatView {
     writeSwitch: boolean;
     /** Where the switch sits: the open conversation is in write mode. */
     canWrite: boolean;
+    /** Whether the host passed `mentions`, so `@` opens the picker. */
+    mentionable: boolean;
+    /** What goes with the next message. */
+    attached: Mention[];
     presentation: {
         rect: Rect | null;
         growFrom: Origin | null;
@@ -103,6 +107,7 @@ export declare class ChatController {
     private openInternal;
     openNew: (ownerId: string, ownerKey: string, seed?: string, opts?: {
         preface?: (ask: string) => string;
+        attach?: Mention[];
     }) => void;
     openSession: (ownerId: string, ownerKey: string, sessionId: string) => void;
     closeChat: () => void;
@@ -115,8 +120,12 @@ export declare class ChatController {
     send: (text: string) => boolean;
     stop: () => void;
     retry: (i: number) => void;
-    /** What to put back in the composer for a turn's Edit. */
+    /** What to put back in the composer for a turn's Edit. Puts back what the turn carried, too. */
     editText: (i: number) => string;
+    findMentions: (query: string) => Mention[];
+    private addAttached;
+    attach: (m: Mention) => void;
+    detach: (id: string) => void;
     takeSeed: () => string;
     answerPermission: (decision: PermissionDecision) => void;
     writeAllowed: () => boolean;
