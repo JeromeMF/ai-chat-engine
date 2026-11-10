@@ -1,0 +1,385 @@
+{
+  "version": 1,
+  "jobId": "61caeb1f-9e9c-41d3-985b-fe0dfd3ea078",
+  "sessionId": "57bb9377-5618-4936-bde7-a2305bb61833",
+  "scopeKey": "9bb512e6e9e12e1ba12e9273e776a3480245634c6987829c95ec642930636e49",
+  "revision": 60,
+  "createdAt": "2026-10-22T18:07:39.353Z",
+  "updatedAt": "2026-10-22T18:08:10.726Z",
+  "producerGraceExpiresAt": "2026-10-22T18:08:09.353Z",
+  "bestEffortDeadlineAt": "2026-10-22T18:09:02.353Z",
+  "producers": {
+    "core": {
+      "state": "sealed",
+      "intentKey": "71af6bc0b9b8326e01de92ca60c79cf4acbf2fd2808f2b3b35b226705c9193e5",
+      "payloadDigest": "71af6bc0b9b8326e01de92ca60c79cf4acbf2fd2808f2b3b35b226705c9193e5",
+      "sealedAt": "2026-10-22T18:08:09.718Z",
+      "sealedBy": "recovery"
+    },
+    "wiki": {
+      "state": "no-op",
+      "sealedAt": "2026-10-22T18:07:39.366Z",
+      "sealedBy": "wiki-producer"
+    }
+  },
+  "actions": {
+    "foreground-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "b6c1d5be4488fa79407c6b763c2200df6a0d3b025b32f436620c1ea7c471b88c",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-10-22T18:08:09.422Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "b3a55da6-ecf1-40e9-b0eb-c57e3c61c439",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:09.710Z"
+    },
+    "wiki-capture": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 0,
+      "idempotencyKey": "8c5fa9731f75311f30822393235e8b59e955dd72de68a98369668cd7bc4c497b",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 9000,
+      "completedAt": "2026-10-22T18:07:39.366Z"
+    },
+    "team-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "9c4d8f0753d295db44b17200a5a5920ded00b0cd68aea94cb28d3e1c0b1cd542",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-10-22T18:08:09.732Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "cb684442-7355-4380-ae29-148af0a5e3da",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:09.861Z"
+    },
+    "python-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "10cd24b2a972307a7430c3ce3628b022d57938754ad55f5ee12668145855fd76",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-10-22T18:08:09.878Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "53f76e64-5eb4-4b86-bd71-5821d03f0891",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.023Z"
+    },
+    "reply-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "1ccfd0ec24a5345c360ee9613f98df168d2aab7ca4c2922c569d78c79f958463",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-10-22T18:08:10.038Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "6a92866a-9562-4417-865d-9d614dc48e93",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.164Z"
+    },
+    "callback": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "48b67d6e7071379c8324037819fb8a8343208206e95b8c0a068707992ac31315",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-10-22T18:08:10.179Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "bdce9b90-aca8-4634-adfe-58ed5ab09860",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.296Z"
+    },
+    "notification": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "db862171f2fc7d09e4d64ce6cc2c3d261f3826474cae5f2303595d4145ddb0cd",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-10-22T18:08:10.315Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "45745685-a8ae-4cfc-813d-13d0eec86d8d",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.436Z"
+    },
+    "openclaw": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "3641a84dc37e9a5d7b17b1228f4f9f84b34efd0afe033fe51dcc772b6ce5b13b",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "ended_at": "2026-10-22T18:08:09.568Z",
+          "reason": "prompt_input_exit",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-10-22T18:08:10.448Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "a17d1e5c-0789-44d8-af79-dc6c2b99d4d0",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.566Z"
+    },
+    "spawn-next": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "0fb14a398ce1527e0c04aa3c93bd89ee8ab1dac36b443ac0c276b7dfa31a2b1b",
+      "payload": {
+        "transcriptPath": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+        "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+        "reason": "prompt_input_exit",
+        "input": {
+          "session_id": "57bb9377-5618-4936-bde7-a2305bb61833",
+          "transcript_path": "/Users/tiagopedras/.claude/projects/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833.jsonl",
+          "cwd": "/Users/tiagopedras/Code/PACKAGES/ai_chat_engine",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-tiagopedras-Code/57bb9377-5618-4936-bde7-a2305bb61833/scratchpad",
+          "prompt_id": "60aeb379-b12d-4ffd-a67a-0392b6fd42ba",
+          "agent_type": "frontend-lead-agent",
+          "hook_event_name": "SessionEnd",
+          "reason": "prompt_input_exit"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-10-22T18:08:10.582Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "0b1d51d7-bec2-4609-a807-b88cd83b4e77",
+        "phase": "terminal",
+        "deadlineAt": "2026-10-22T18:08:19.355Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-10-22T18:08:10.695Z"
+    }
+  },
+  "owner": null,
+  "phase": "complete",
+  "recoverableFailure": {
+    "reason": "actions-settled",
+    "releasedAt": "2026-10-22T18:08:10.711Z",
+    "ownerNonce": "8376f933-e53c-4c16-94c6-086682d5999b"
+  },
+  "completion": {
+    "completedAt": "2026-10-22T18:08:10.711Z",
+    "terminalDigest": "7300dd1bcda1b83d1ca85e8b45e27b52f9051fc0602d603670908353ac0752ab",
+    "terminalRevision": 59
+  }
+}

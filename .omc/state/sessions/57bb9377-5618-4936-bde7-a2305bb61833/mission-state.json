@@ -1,0 +1,95 @@
+{
+  "updatedAt": "2026-10-22T16:41:28.348Z",
+  "missions": [
+    {
+      "id": "session:57bb9377-5618-4936-bde7-a2305bb61833:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-10-22T16:17:49.669Z",
+      "updatedAt": "2026-10-22T16:41:28.348Z",
+      "status": "done",
+      "workerCount": 2,
+      "taskCounts": {
+        "total": 2,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 2,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "chunk3-board-mentions:achunk3",
+          "role": "chunk3-board-mentions",
+          "ownership": "achunk3-board-mentions-aebc2b1915f0c4de",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-22T16:41:28.348Z"
+        },
+        {
+          "name": "qa-chunk2:aqa-chu",
+          "role": "qa-chunk2",
+          "ownership": "aqa-chunk2-52aa2a9d60b72f76",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-22T16:19:12.079Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:achunk3-board-mentions-aebc2b1915f0c4de:2026-10-22T16:17:49.669Z",
+          "at": "2026-10-22T16:17:49.669Z",
+          "kind": "update",
+          "agent": "chunk3-board-mentions:achunk3",
+          "detail": "started chunk3-board-mentions:achunk3",
+          "sourceKey": "session-start:achunk3-board-mentions-aebc2b1915f0c4de"
+        },
+        {
+          "id": "session-start:aqa-chunk2-52aa2a9d60b72f76:2026-10-22T16:17:49.723Z",
+          "at": "2026-10-22T16:17:49.723Z",
+          "kind": "update",
+          "agent": "qa-chunk2:aqa-chu",
+          "detail": "started qa-chunk2:aqa-chu",
+          "sourceKey": "session-start:aqa-chunk2-52aa2a9d60b72f76"
+        },
+        {
+          "id": "session-stop:a84f6b3688b58036c:2026-10-22T16:17:56.327Z",
+          "at": "2026-10-22T16:17:56.327Z",
+          "kind": "completion",
+          "agent": "chunk3-board-mentions:achunk3",
+          "detail": "completed",
+          "sourceKey": "session-stop:a84f6b3688b58036c"
+        },
+        {
+          "id": "session-stop:aqa-chunk2-52aa2a9d60b72f76:2026-10-22T16:19:12.079Z",
+          "at": "2026-10-22T16:19:12.079Z",
+          "kind": "completion",
+          "agent": "qa-chunk2:aqa-chu",
+          "detail": "completed",
+          "sourceKey": "session-stop:aqa-chunk2-52aa2a9d60b72f76"
+        },
+        {
+          "id": "session-stop:achunk3-board-mentions-aebc2b1915f0c4de:2026-10-22T16:25:43.955Z",
+          "at": "2026-10-22T16:25:43.955Z",
+          "kind": "completion",
+          "agent": "chunk3-board-mentions:achunk3",
+          "detail": "completed",
+          "sourceKey": "session-stop:achunk3-board-mentions-aebc2b1915f0c4de"
+        },
+        {
+          "id": "session-stop:ad088559fdc9a893a:2026-10-22T16:41:28.348Z",
+          "at": "2026-10-22T16:41:28.348Z",
+          "kind": "completion",
+          "agent": "chunk3-board-mentions:achunk3",
+          "detail": "completed",
+          "sourceKey": "session-stop:ad088559fdc9a893a"
+        }
+      ]
+    }
+  ]
+}

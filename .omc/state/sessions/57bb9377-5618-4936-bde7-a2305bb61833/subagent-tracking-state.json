@@ -1,0 +1,48 @@
+{
+  "agents": [
+    {
+      "agent_id": "achunk3-board-mentions-aebc2b1915f0c4de",
+      "agent_type": "chunk3-board-mentions",
+      "started_at": "2026-10-22T16:17:49.669Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-10-22T16:25:43.955Z",
+      "duration_ms": 474286
+    },
+    {
+      "agent_id": "aqa-chunk2-52aa2a9d60b72f76",
+      "agent_type": "qa-chunk2",
+      "started_at": "2026-10-22T16:17:49.723Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-10-22T16:19:12.079Z",
+      "duration_ms": 82356
+    },
+    {
+      "agent_id": "a84f6b3688b58036c",
+      "agent_type": "frontend-lead-agent",
+      "started_at": "2026-10-22T16:17:56.327Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-10-22T16:17:56.327Z",
+      "synthetic": true,
+      "telemetry_status": "unmatched_stop",
+      "telemetry_note": "SubagentStop arrived without a matching SubagentStart; native Agent/Task start telemetry was not observed."
+    },
+    {
+      "agent_id": "ad088559fdc9a893a",
+      "agent_type": "frontend-lead-agent",
+      "started_at": "2026-10-22T16:41:28.348Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-10-22T16:41:28.348Z",
+      "synthetic": true,
+      "telemetry_status": "unmatched_stop",
+      "telemetry_note": "SubagentStop arrived without a matching SubagentStart; native Agent/Task start telemetry was not observed."
+    }
+  ],
+  "total_spawned": 1,
+  "total_completed": 4,
+  "total_failed": 0,
+  "last_updated": "2026-10-22T16:41:28.351Z"
+}
